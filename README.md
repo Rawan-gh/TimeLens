@@ -1,31 +1,33 @@
-# TimeLens — Simple (GFPGAN)
+# TimeLens — Auto Enhance
+Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + automatic **de-scratch** (inpainting).  
+**Zero settings:** just upload a photo → click **Enhance**.
 
-Super-simple GFPGAN app for macOS (works on CPU).
+> 🧠 The app makes automatic decisions per image (whether to colorize, how much de-scratch, safe order, and upscale factor).
 
-## Setup (Conda recommended)
+---
+
+## ✨ Features
+- ✅ **GFPGAN** face restoration (safe defaults)
+- 🎨 **Auto colorization** for B/W photos (OpenCV DNN, Zhang et al.)
+- 🧽 **Auto de-scratch** (background inpainting while protecting faces)
+- ⬆️ **Auto upscale** (based on image size)
+- 🖥️ Simple Gradio UI (runs locally on macOS CPU)
+
+---
+
+## 🚀 Quick Start (macOS + Conda)
 ```bash
+# 0) Clone your repo (or download ZIP and open folder)
+cd <your-repo-folder>
+
+# 1) Create & activate environment
 conda create -n timelens python=3.10 -y
 conda activate timelens
 python -m pip install -U pip setuptools wheel
 
-# Install PyTorch (CPU; for GPU follow pytorch.org)
-pip install torch torchvision
-
-# Install remaining deps
+# 2) Install deps (PyTorch CPU + project libs)
 pip install -r requirements.txt
-```
 
-## Run the UI
-```bash
+# 3) Run
 python app.py
-# Open the link shown by Gradio (usually http://127.0.0.1:7860/)
-```
-
-## CLI (optional)
-```bash
-python cli_restore.py -i path/to/input.jpg -o restored.jpg
-```
-
-Notes:
-- First run will auto-download GFPGANv1.3 weights into ./models/.
-- RealESRGAN is not used (keeps things light and simple).
+# Open the link printed in Terminal (usually http://127.0.0.1:7860/)
