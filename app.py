@@ -11,7 +11,7 @@ from gfpgan import GFPGANer
 MODELS_DIR = "models"
 GFPGAN_MODEL_URL = "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth"
 
-# Colorization model mirrors (نجرّب بالترتيب)
+# Colorization model mirrors (tried in order)
 COLOR_PROTO_URLS = [
     "https://raw.githubusercontent.com/richzhang/colorization/caffe/colorization/models/colorization_deploy_v2.prototxt",
     "https://raw.githubusercontent.com/opencv/opencv_extra/master/testdata/dnn/colorization_deploy_v2.prototxt",
@@ -25,7 +25,7 @@ COLOR_PTS_URLS = [
     "https://storage.openvinotoolkit.org/repositories/datumaro/models/colorization/pts_in_hull.npy",
 ]
 
-# Haar face detector (لحماية الوجوه من inpaint)
+# Haar face detector (to protect faces during inpainting)
 HAAR_URLS = [
     "https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml",
     "https://raw.githubusercontent.com/opencv/opencv/4.x/data/haarcascades/haarcascade_frontalface_default.xml",
@@ -74,30 +74,30 @@ def bgr_to_pil(arr: np.ndarray) -> Image.Image:
 # ===================== Auto decisions =====================
 def robust_need_color(bgr: np.ndarray) -> bool:
     """
-    يقرر تلقائيًا إذا الصورة تحتاج تلوين:
-    - فرق القنوات (B,G,R)
-    - تشبّع HSV
-    - طاقة الكروما في Lab
-    يتجاهل أسفل 8% لتفادي علامات مائية/هوامش.
+    Decide if the image needs colorization:
+    - RGB channel difference
+    - HSV saturation
+    - Lab chroma energy
+    Ignores the bottom 8% (to avoid watermarks/margins).
     """
     h, w = bgr.shape[:2]
     cut = int(0.08 * h)
     roi = bgr[:h - cut, :, :] if cut > 0 else bgr
     roi_u8 = roi if roi.dtype == np.uint8 else np.clip(roi, 0, 255).astype(np.uint8)
 
-    # (1) فرق القنوات
+    # (1) Channel differences
     b, g, r = cv2.split(roi_u8.astype(np.int16))
     diff = (np.abs(b - g) + np.abs(g - r) + np.abs(b - r)) / 3.0
     if np.mean(diff) < 6:
         return True
 
-    # (2) تشبّع HSV
+    # (2) HSV saturation
     hsv = cv2.cvtColor(roi_u8, cv2.COLOR_BGR2HSV)
-    s_med = float(np.median(hsv[:, :, 1]))      # 0..255
+    s_med = float(np.median(hsv[:, :, 1]))  # 0..255
     if s_med < 18:
         return True
 
-    # (3) طاقة الكروما في Lab
+    # (3) Lab chroma magnitude
     lab = cv2.cvtColor(roi_u8, cv2.COLOR_BGR2LAB)
     a = lab[:, :, 1].astype(np.float32) - 128.0
     bch = lab[:, :, 2].astype(np.float32) - 128.0
@@ -108,13 +108,14 @@ def robust_need_color(bgr: np.ndarray) -> bool:
     return False
 
 def estimate_damage(bgr: np.ndarray) -> float:
-    """نسبة تقريبية للخدوش/التشققات [0..1]."""
+    """Rough percentage of scratches/cracks [0..1]."""
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     h, w = gray.shape[:2]
     scale = 640 / max(h, w)
     gray_s = cv2.resize(gray, (int(w*scale), int(h*scale))) if scale < 1.0 else gray
     k = max(5, int(0.01 * min(gray_s.shape)))
-    if k % 2 == 0: k += 1
+    if k % 2 == 0:
+        k += 1
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (k, k))
     tophat = cv2.morphologyEx(gray_s, cv2.MORPH_TOPHAT, kernel)
     blackhat = cv2.morphologyEx(gray_s, cv2.MORPH_BLACKHAT, kernel)
@@ -128,7 +129,8 @@ def auto_params(bgr: np.ndarray):
     severe = dmg > 0.12
     moderate = dmg > 0.05
     sens = 0.55 if moderate else 0.45
-    if severe: sens = 0.70
+    if severe:
+        sens = 0.70
     short_side = min(bgr.shape[:2])
     radius = int(np.clip(short_side * (0.002 if not severe else 0.0035), 2, 6))
     order = "restore_inpaint_colorize" if severe else "colorize_restore_inpaint"
@@ -181,7 +183,8 @@ def detect_faces(bgr: np.ndarray):
 def build_crack_mask(bgr: np.ndarray, sensitivity: float) -> np.ndarray:
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     k = int(5 + sensitivity * 15)  # 5..20
-    if k % 2 == 0: k += 1
+    if k % 2 == 0:
+        k += 1
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (k, k))
     tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, kernel)
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
@@ -195,6 +198,7 @@ def build_crack_mask(bgr: np.ndarray, sensitivity: float) -> np.ndarray:
 
 def inpaint_background_only(bgr: np.ndarray, sensitivity: float, radius: int) -> np.ndarray:
     mask = build_crack_mask(bgr, sensitivity)
+    # Protect face regions from being inpainted
     for (x, y, w, h) in detect_faces(bgr):
         pad = max(10, int(0.1 * w))
         x0, y0 = max(0, x - pad), max(0, y - pad)
@@ -222,8 +226,10 @@ def get_restorer(upscale: int):
 
 def auto_upscale(bgr: np.ndarray) -> int:
     short = min(bgr.shape[:2])
-    if short < 480: return 3
-    if short < 720: return 2
+    if short < 480:
+        return 3
+    if short < 720:
+        return 2
     return 1
 
 def restore_faces(bgr_in: np.ndarray, upscale: int) -> np.ndarray:
@@ -237,12 +243,12 @@ def restore_faces(bgr_in: np.ndarray, upscale: int) -> np.ndarray:
 def enhance_auto(image: Image.Image):
     bgr = pil_to_bgr(image)
 
-    # قرارات تلقائية
+    # Auto decisions
     order, sens, radius, use_inpaint, dmg = auto_params(bgr)
     need_color = robust_need_color(bgr)
     up = auto_upscale(bgr)
 
-    # ترتيب المعالجة
+    # Processing order
     try:
         if order == "restore_inpaint_colorize":
             bgr = restore_faces(bgr, up)
@@ -250,7 +256,7 @@ def enhance_auto(image: Image.Image):
                 bgr = inpaint_background_only(bgr, sens, radius)
             if need_color:
                 bgr = colorize_bgr(bgr)
-        else:  # colorize_restore_inpaint
+        else:  # "colorize_restore_inpaint"
             if need_color:
                 bgr = colorize_bgr(bgr)
             bgr = restore_faces(bgr, up)
@@ -266,14 +272,14 @@ def enhance_auto(image: Image.Image):
     )
     return bgr_to_pil(bgr), info
 
-# ===================== Gradio UI (صفر إعدادات) =====================
+# ===================== Gradio UI (zero settings) =====================
 with gr.Blocks(title="TimeLens — Auto Enhance") as demo:
-    gr.Markdown("## TimeLens — Auto Enhance\nارفع الصورة واضغط **Enhance** فقط. الباقي أوتوماتيك.")
+    gr.Markdown("## TimeLens — Auto Enhance\nUpload an image and click **Enhance**. Everything else is automatic.")
     with gr.Row():
         with gr.Column():
             inp = gr.Image(type="pil", label="Input")
             btn = gr.Button("Enhance")
-            log = gr.Textbox(label="What I decided (auto)", interactive=False)
+            log = gr.Textbox(label="What the app decided (auto)", interactive=False)
         with gr.Column():
             out = gr.Image(type="pil", label="Output", show_download_button=True)
 
