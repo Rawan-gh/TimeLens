@@ -3,6 +3,14 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 **Zero settings:** just upload a photo → click **Enhance**.
 
 > 🧠 The app makes automatic decisions per image (whether to colorize, how much de-scratch, safe order, and upscale factor).
+>
+| Before | After |
+|---|---|
+| <img src="examples/B1.jpg" width="45%"> | <img src="examples/F1.jpg" width="45%"> |
+| <img src="examples/B2.jpg" width="45%"> | <img src="examples/F2.jpg" width="45%"> |
+| <img src="examples/B3.jpg" width="45%"> | <img src="examples/F3.jpg" width="45%"> |
+
+
 
 ---
 
