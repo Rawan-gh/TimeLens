@@ -3,14 +3,16 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 **Zero settings:** just upload a photo → click **Enhance**.
 
 > 🧠 The app makes automatic decisions per image (whether to colorize, how much de-scratch, safe order, and upscale factor).
->
-| Before | After |
-|---|---|
-| <img src="examples/B1.jpg" width="45%"> | <img src="examples/F1.jpg" width="45%"> |
-| <img src="examples/B2.jpg" width="45%"> | <img src="examples/F2.jpg" width="45%"> |
-| <img src="examples/B3.jpg" width="45%"> | <img src="examples/F3.jpg" width="45%"> |
 
+---
 
+## Table of Contents
+- [Features](#-features)
+- [Quick Start (macOS + Conda)](#-quick-start-macos--conda)
+- [Examples](#-examples)
+- [Troubleshooting](#-troubleshooting)
+- [Data Analysis (pre-project)](#data-analysis-pre-project)
+- [Credits](#-credits)
 
 ---
 
@@ -39,3 +41,9 @@ pip install -r requirements.txt
 # 3) Run
 python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
+
+🖼️ Examples
+Before	After
+<img src="examples/B1.jpg" width="45%">	<img src="examples/F1.jpg" width="45%">
+<img src="examples/B2.jpg" width="45%">	<img src="examples/F2.jpg" width="45%">
+<img src="examples/B3.jpg" width="45%">	<img src="examples/F3.jpg" width="45%">
