@@ -9,7 +9,7 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 ## Table of Contents
 - [Features](#-features)
 - [Quick Start (macOS + Conda)](#-quick-start-macos--conda)
-- [Examples](#-examples)
+- [Examples](#-Examples)
 - [Troubleshooting](#-troubleshooting)
 - [Data Analysis (pre-project)](#data-analysis-pre-project)
 - [Credits](#-credits)
