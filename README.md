@@ -24,10 +24,9 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 - 🖥️ Simple Gradio UI (runs locally on macOS CPU)
 
 ---
-<details>
-<summary><strong>Quick Start (macOS + Conda)</strong> — click to expand</summary>
-
-```bash
+## 🚀 Quick Start (macOS + Conda)
+```
+bash
 # 0) Clone your repo (or download ZIP and open folder)
 cd <your-repo-folder>
 
@@ -42,12 +41,10 @@ pip install -r requirements.txt
 # 3) Run
 python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
-</details>
 ```
 ---
 
 ## 🖼️ Examples
-
 
 
 | Before                                  | After                                   |
