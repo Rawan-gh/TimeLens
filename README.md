@@ -24,7 +24,7 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 - 🖥️ Simple Gradio UI (runs locally on macOS CPU)
 
 ---
-
+<details>
 ## 🚀 Quick Start (macOS + Conda)
 ```bash
 # 0) Clone your repo (or download ZIP and open folder)
