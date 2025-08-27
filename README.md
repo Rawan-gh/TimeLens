@@ -57,7 +57,7 @@ python app.py
 
 ## Data Analysis (pre-project)
 
-**What this is.** 
+**What this is.**
 Before building the app, we ran a small analysis to demonstrate the idea:
 use clean high-quality images → **synthetically degrade** them (blur/noise/JPEG/scratches) →
 attempt restoration → compare against the clean originals with objective metrics.
