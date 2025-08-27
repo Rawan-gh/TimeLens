@@ -6,16 +6,6 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 
 ---
 
-## Table of Contents
-- [Features](#-features)
-- [Quick Start (macOS + Conda)](#-quick-start-macos--conda)
-- [Examples](#-Examples)
-- [Troubleshooting](#-troubleshooting)
-- [Data Analysis (pre-project)](#data-analysis-pre-project)
-- [Credits](#-credits)
-
----
-
 ## ✨ Features
 - ✅ **GFPGAN** face restoration (safe defaults)
 - 🎨 **Auto colorization** for B/W photos (OpenCV DNN, Zhang et al.)
