@@ -43,6 +43,8 @@ python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
 ```
 
+---
+
 ## 🖼️ Examples
 | Before | After | 
 |---|---| 
