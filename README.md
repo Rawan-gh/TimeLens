@@ -49,6 +49,8 @@ python app.py
 
 ## 🖼️ Examples
 
+---
+
 | Before                                  | After                                   |
 | --------------------------------------- | --------------------------------------- |
 | <img src="examples/B1.jpg" width="45%"> | <img src="examples/F1.jpg" width="45%"> |
@@ -85,13 +87,4 @@ Shows what the synthetic corruption looks like.
 | <img src="examples/analysis/01_clean.jpg" width="45%"> | <img src="examples/analysis/01_degraded.jpg" width="45%"> |
 | <img src="examples/analysis/02_clean.jpg" width="45%"> | <img src="examples/analysis/02_degraded.jpg" width="45%"> |
 
----
 
-## 🙏 Credits
-
-* **GFPGAN** — Tencent ARC
-* **Colorization** — Richard Zhang et al. (OpenCV DNN sample)
-
-```
-::contentReference[oaicite:0]{index=0}
-```
