@@ -41,7 +41,7 @@ pip install -r requirements.txt
 # 3) Run
 python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
-````
+```
 
 </details>
 
@@ -49,7 +49,7 @@ python app.py
 
 ## 🖼️ Examples
 
----
+
 
 | Before                                  | After                                   |
 | --------------------------------------- | --------------------------------------- |
