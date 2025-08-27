@@ -70,11 +70,4 @@ Shows what the synthetic corruption looks like.
 
 
 
-B) Degraded vs Restored
-Shows what the model recovered (optional if you have restored results).
-Degraded	Restored (model)
-<img src="examples/analysis/01_degraded.jpg" width="45%">	<img src="examples/analysis/01_restored.jpg" width="45%">
-Metrics. We report PSNR (dB) and SSIM [0..1] computed against the clean originals.
-Higher is better for both. Numbers come from the notebook.
-
 
