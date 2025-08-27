@@ -43,11 +43,38 @@ python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
 ```
 
-## 🖼️Examples
+## 🖼️ Examples
 | Before | After | 
 |---|---| 
 | <img src="examples/B1.jpg" width="45%"> | <img src="examples/F1.jpg" width="45%"> | 
 | <img src="examples/B2.jpg" width="45%"> | <img src="examples/F2.jpg" width="45%"> | 
 | <img src="examples/B3.jpg" width="45%"> | <img src="examples/F3.jpg" width="45%"> |
+
+
+## Data Analysis (pre-project)
+What this is. Before building the app, we ran a small analysis to demonstrate the idea:
+use clean high-quality images → synthetically degrade them (blur/noise/JPEG/scratches) →
+attempt restoration → compare against the clean originals with objective metrics.
+Notebook. See notebooks/Image_Quality_Analysis.ipynb.
+This is documentation only and does not affect the app.
+
+### A) Clean vs Degraded
+Shows what the synthetic corruption looks like.
+
+| Clean (HQ) | Degraded (synthetic) | 
+|---|---| 
+| <img src="examples/analysis/01_clean.jpg" width="45%"> | <img src="examples/analysis/01_degraded.jpg" width="45%"> | 
+| <img src="examples/analysis/02_clean.jpg" width="45%"> | <img src="examples/analysis/02_degraded.jpg" width="45%"> | 
+
+
+
+
+
+B) Degraded vs Restored
+Shows what the model recovered (optional if you have restored results).
+Degraded	Restored (model)
+<img src="examples/analysis/01_degraded.jpg" width="45%">	<img src="examples/analysis/01_restored.jpg" width="45%">
+Metrics. We report PSNR (dB) and SSIM [0..1] computed against the clean originals.
+Higher is better for both. Numbers come from the notebook.
 
 
