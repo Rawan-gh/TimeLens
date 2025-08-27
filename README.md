@@ -42,14 +42,12 @@ pip install -r requirements.txt
 python app.py
 # Open the link printed in Terminal (usually http://127.0.0.1:7860/)
 ```
+
+## 🖼️ Examples
 | Before | After | 
 |---|---| 
 | <img src="examples/B1.jpg" width="45%"> | <img src="examples/F1.jpg" width="45%"> | 
 | <img src="examples/B2.jpg" width="45%"> | <img src="examples/F2.jpg" width="45%"> | 
 | <img src="examples/B3.jpg" width="45%"> | <img src="examples/F3.jpg" width="45%"> |
 
-## 🖼️ Examples
-Before	After
-<img src="examples/B1.jpg" width="45%">	<img src="examples/F1.jpg" width="45%">
-<img src="examples/B2.jpg" width="45%">	<img src="examples/F2.jpg" width="45%">
-<img src="examples/B3.jpg" width="45%">	<img src="examples/F3.jpg" width="45%">
+
