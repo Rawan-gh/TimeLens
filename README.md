@@ -43,7 +43,7 @@ python app.py
 | <img src="examples/B2.jpg" width="45%"> | <img src="examples/F2.jpg" width="45%"> |
 | <img src="examples/B3.jpg" width="45%"> | <img src="examples/F3.jpg" width="45%"> |
 
-> Tip: keep example images ≤ 2–3MB so they load fast on GitHub.
+
 
 ---
 
