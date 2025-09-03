@@ -4,8 +4,28 @@ import numpy as np
 from PIL import Image
 import gradio as gr
 import cv2
+import gdown
 
 from gfpgan import GFPGANer
+
+
+# Map file names to their Google Drive IDs
+models_to_download = {
+    "colorization_deploy_v2.prototxt": "1zCT7qsLjckfdvvFUoNbGc0sT28CXIOo2",
+    "colorization_release_v2.caffemodel": "1MjholzNWvfLQK1kA_QT9pFhm5ktik4pM",
+    "GFPGANv1.3.pth": "1Dp0tVXIsjiVaG3pHCfLvoOQaEruTbL2b",
+    "haarcascade_frontalface_default.xml": "1G2YSvmUIi308YKXDfMB2EbUQOxZTLjiJ",
+    "pts_in_hull.npy": "1ovn7oSLprM4oqbSbIoAFs8x_YTuHnPgN",
+}
+
+# Download models if they don’t exist locally
+for fname, file_id in models_to_download.items():
+    if not os.path.exists(fname):
+        print(f"⬇ Downloading {fname} ...")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, fname, quiet=False)
+        print(f"✅ {fname} downloaded.")
+
 
 # ===================== Paths & Weights =====================
 MODELS_DIR = "models"
