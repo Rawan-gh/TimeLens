@@ -1,8 +1,10 @@
-# TimeLens — Auto Enhance
-Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + automatic **de-scratch** (inpainting).  
-**Zero settings:** just upload a photo → click **Enhance**.
+# 🕰️ TimeLens — Revive Memories ✨
+*A collaborative project by **Rawan Alghannam** & **Hadeel Al-Ghassab***  
 
-> 🧠 The app makes automatic decisions per image (whether to colorize, how much de-scratch, safe order, and upscale factor).
+Bring your old photos back to life with AI.  
+This app restores faces 🧑‍🦳, colorizes black & white photos 🎨, and removes scratches 🧽 — all automatically.
+
+🌐 **Try it live here**: [TimeLens on Hugging Face](https://rawan-gh-timelens.hf.space)
 
 ---
 
@@ -11,12 +13,12 @@ Face restoration with **GFPGAN** + automatic **colorization** (B/W → color) + 
 - 🎨 **Auto colorization** for B/W photos (OpenCV DNN, Zhang et al.)
 - 🧽 **Auto de-scratch** (background inpainting while protecting faces)
 - ⬆️ **Auto upscale** (based on image size)
-- 🖥️ Simple Gradio UI (runs locally on macOS CPU)
+- 🌐 **Web Demo** available on Hugging Face Spaces
 
 ---
+
 ## 🚀 Quick Start (macOS + Conda)
-```
-bash
+```bash
 # 0) Clone your repo (or download ZIP and open folder)
 cd <your-repo-folder>
 
@@ -54,24 +56,4 @@ python app.py
 * **No colorization on some photos** → the app only colorizes true B/W or very low-saturation images to avoid over-coloring already-colored photos.
 
 ---
-
-## Data Analysis (pre-project)
-
-**What this is.**
-Before building the app, we ran a small analysis to demonstrate the idea:
-use clean high-quality images → **synthetically degrade** them (blur/noise/JPEG/scratches) →
-attempt restoration → compare against the clean originals with objective metrics.
-
-**Notebook.** See `notebooks/Image_Quality_Analysis.ipynb`.
-This is documentation only and does **not** affect the app.
-
-### A) Clean vs Degraded
-
-Shows what the synthetic corruption looks like.
-
-| Clean (HQ)                                             | Degraded (synthetic)                                      |
-| ------------------------------------------------------ | --------------------------------------------------------- |
-| <img src="examples/analysis/01_clean.jpg" width="45%"> | <img src="examples/analysis/01_degraded.jpg" width="45%"> |
-| <img src="examples/analysis/02_clean.jpg" width="45%"> | <img src="examples/analysis/02_degraded.jpg" width="45%"> |
-
-
+💡 Made with love by Rawan Alghannam & Hadeel Al-Ghassab | Graduation Project 🎓
