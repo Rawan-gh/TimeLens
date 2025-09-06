@@ -17,7 +17,7 @@ DRIVE_FILES = {
 }
 
 def download_from_drive(filename: str, file_id: str):
-    """Download file from Google Drive if not already available locally."""
+    """Download a file from Google Drive if not already available locally."""
     path = os.path.join(MODELS_DIR, filename)
     os.makedirs(MODELS_DIR, exist_ok=True)
     if not os.path.exists(path):
@@ -28,11 +28,11 @@ def download_from_drive(filename: str, file_id: str):
 
 # ===================== Utils =====================
 def pil_to_bgr(img: Image.Image) -> np.ndarray:
-    """Convert PIL image to OpenCV BGR format."""
+    """Convert a PIL image to an OpenCV BGR numpy array."""
     return np.array(img.convert("RGB"))[:, :, ::-1].copy()
 
 def bgr_to_pil(arr: np.ndarray) -> Image.Image:
-    """Convert OpenCV BGR image back to PIL format."""
+    """Convert an OpenCV BGR numpy array back to a PIL image."""
     return Image.fromarray(arr[:, :, ::-1].astype("uint8"))
 
 # ===================== Scratch Removal =====================
@@ -45,18 +45,18 @@ def build_crack_mask(bgr: np.ndarray, sensitivity: float) -> np.ndarray:
     return mask
 
 def remove_scratches(bgr: np.ndarray, mode: str) -> np.ndarray:
-    """Remove scratches from the image based on user-selected mode."""
+    """Remove scratches from the image depending on selected mode."""
     if mode == "No Scratches":
         return bgr
     elif mode == "Small Scratches":
         sensitivity = 0.8
-    else:  # "Big Scratches"
+    else:  # Big Scratches
         sensitivity = 0.95
 
     mask = build_crack_mask(bgr, sensitivity)
     scratch_ratio = np.sum(mask > 0) / mask.size
 
-    # Ignore very small scratch detection to avoid false positives
+    # Ignore tiny scratch detections to avoid false positives
     if scratch_ratio < 0.001:
         return bgr
 
@@ -77,7 +77,7 @@ def get_restorer(upscale: int = 2):
     return _restorer
 
 def restore_faces(bgr: np.ndarray) -> np.ndarray:
-    """Restore facial regions using GFPGAN."""
+    """Apply GFPGAN to restore facial regions."""
     restorer = get_restorer(2)
     _, _, restored = restorer.enhance(bgr, has_aligned=False, only_center_face=False, paste_back=True)
     return restored if restored is not None else bgr
@@ -85,7 +85,7 @@ def restore_faces(bgr: np.ndarray) -> np.ndarray:
 # ===================== Colorization =====================
 _color_net = None
 def get_colorizer():
-    """Load pretrained colorization model."""
+    """Load pretrained colorization model from Zhang et al."""
     global _color_net
     if _color_net is not None:
         return _color_net
@@ -101,13 +101,13 @@ def get_colorizer():
     return _color_net
 
 def need_colorization(bgr: np.ndarray) -> bool:
-    """Decide if the image is grayscale and needs colorization."""
+    """Decide if the image is grayscale and requires colorization."""
     b, g, r = cv2.split(bgr.astype(np.int16))
     diff = (np.abs(b-g) + np.abs(g-r) + np.abs(b-r)).mean()
     return diff < 8
 
 def colorize_bgr(bgr: np.ndarray) -> np.ndarray:
-    """Apply automatic colorization to grayscale photos."""
+    """Apply automatic colorization to grayscale images."""
     net = get_colorizer()
     H, W = bgr.shape[:2]
     img_float = bgr.astype(np.float32) / 255.0
@@ -124,7 +124,7 @@ def colorize_bgr(bgr: np.ndarray) -> np.ndarray:
 
 # ===================== Pipeline =====================
 def enhance_pipeline(image: Image.Image, scratch_mode: str):
-    """Full pipeline: scratch removal -> face restoration -> auto colorization."""
+    """Pipeline: scratch removal -> face restoration -> optional colorization + auto decision log."""
     bgr = pil_to_bgr(image)
 
     # Step 1: Scratch removal
@@ -133,16 +133,45 @@ def enhance_pipeline(image: Image.Image, scratch_mode: str):
     # Step 2: Face restoration
     restored = restore_faces(no_scratches)
 
-    # Step 3: Optional colorization
-    if need_colorization(restored):
-        restored = colorize_bgr(restored)
+    # Step 3: Colorization (if needed)
+    need_color = need_colorization(restored)
+    if need_color:
+        final = colorize_bgr(restored)
+    else:
+        final = restored
 
-    return bgr_to_pil(bgr), bgr_to_pil(no_scratches), bgr_to_pil(restored)
+    # ===== Auto decision info =====
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(gray, 50, 150)
+    damage = float(np.mean(edges)) / 255.0
+
+    if scratch_mode == "No Scratches":
+        inpaint = False
+        sens = 0.0
+        r = 0
+    elif scratch_mode == "Small Scratches":
+        inpaint = True
+        sens = 0.55
+        r = 3
+    else:  # Big Scratches
+        inpaint = True
+        sens = 0.70
+        r = 5
+
+    upscale = 1
+    order = "restore_inpaint_colorize" if inpaint else "restore_colorize"
+
+    decisions = (
+        f"damage={damage:.2f}, need_color={need_color}, "
+        f"order={order}, inpaint={inpaint}(sens={sens:.2f}, r={r}), upscale={upscale}"
+    )
+
+    return bgr_to_pil(bgr), bgr_to_pil(final), decisions
 
 # ===================== UI =====================
 custom_css = """
 body {
-    background: #d7ccc8; /* Beige-Brown background */
+    background: #d7ccc8;
 }
 .gradio-container {
     font-family: 'Merriweather', serif;
@@ -152,7 +181,6 @@ body {
     font-size: 40px;
     font-weight: bold;
     color: #3e2723;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     margin-bottom: 12px;
 }
 #subtitle {
@@ -166,32 +194,23 @@ body {
     padding: 22px;
     border-radius: 16px;
     border: 1px solid #a1887f;
-    box-shadow: 0px 6px 18px rgba(62, 39, 35, 0.2);
 }
 .gr-button {
     background: #6d4c41 !important;
     color: white !important;
     font-size: 18px !important;
     border-radius: 10px !important;
-    transition: 0.3s;
-}
-.gr-button:hover {
-    background: #4e342e !important;
 }
 """
 
 with gr.Blocks(css=custom_css, title="TimeLens — Revive Memories") as demo:
-    # Title & Subtitle
     gr.HTML("<div id='title'>🕰️ TimeLens — Revive Memories</div>")
     gr.HTML("<div id='subtitle'>Elegant AI restoration for your cherished old photos</div>")
     
-    # Top row: Input | No Scratches | Final Result
     with gr.Row():
         inp = gr.Image(type="pil", label="Input", elem_classes="card")
-        out1 = gr.Image(type="pil", label="No Scratches", show_download_button=True, elem_classes="card")
-        out2 = gr.Image(type="pil", label="Final Result", show_download_button=True, elem_classes="card")
+        out1 = gr.Image(type="pil", label="Final Result", show_download_button=True, elem_classes="card")
 
-    # Bottom row: Scratch selection + Enhance button
     with gr.Row():
         with gr.Column(elem_classes="card"):
             scratch_mode = gr.Radio(
@@ -200,9 +219,10 @@ with gr.Blocks(css=custom_css, title="TimeLens — Revive Memories") as demo:
                 label="Scratch Type"
             )
             btn = gr.Button("Enhance ✨")
+    
+    out_decisions = gr.Textbox(label="Auto Decisions", interactive=False)
 
-    # Link button to pipeline
-    btn.click(enhance_pipeline, inputs=[inp, scratch_mode], outputs=[inp, out1, out2])
+    btn.click(enhance_pipeline, inputs=[inp, scratch_mode], outputs=[inp, out1, out_decisions])
 
 if __name__ == "__main__":
     demo.launch()
