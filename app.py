@@ -76,7 +76,6 @@ def build_crack_mask(bgr: np.ndarray, sensitivity: float) -> np.ndarray:
     return mask
 
 def estimate_damage(mask: np.ndarray) -> float:
-    """Estimate damage as ratio of scratch pixels."""
     return float(np.sum(mask > 0) / mask.size)
 
 def remove_scratches_small(bgr: np.ndarray):
@@ -113,7 +112,7 @@ def restore_faces(bgr_in: np.ndarray, upscale: int) -> np.ndarray:
     return restored if restored is not None else bgr_in
 
 # ===================== Final Pipeline =====================
-def enhance_pipeline(image: Image.Image, scratch_mode: str, color_order: str):
+def enhance_pipeline(image: Image.Image, scratch_mode: str):
     bgr = pil_to_bgr(image)
 
     damage, sens, r, inpaint = 0.0, 0.0, 0, False
@@ -126,22 +125,16 @@ def enhance_pipeline(image: Image.Image, scratch_mode: str, color_order: str):
         bgr, damage, sens, r = remove_scratches_big(bgr)
         inpaint = True
 
-    # Colorization order
+    # Always: Colorize → Restore
     colored = need_colorization(bgr)
     upscale = 2
 
-    if color_order == "Colorize before Restore":
-        if colored:
-            bgr = colorize_bgr(bgr)
-        bgr = restore_faces(bgr, upscale)
-    else:
-        bgr = restore_faces(bgr, upscale)
-        if colored:
-            bgr = colorize_bgr(bgr)
+    if colored:
+        bgr = colorize_bgr(bgr)
+    bgr = restore_faces(bgr, upscale)
 
-    # Log
     info = (f"Auto decisions → damage={damage:.2f}, need_color={colored}, "
-            f"order={color_order.replace(' ', '_')}, "
+            f"order=Colorize_before_Restore, "
             f"inpaint={inpaint}(sens={sens:.2f}, r={r}), "
             f"upscale={upscale}, scratch_mode={scratch_mode}")
 
@@ -166,13 +159,11 @@ with gr.Blocks(css=custom_css, title="TimeLens — Revive Memories") as demo:
     with gr.Row():
         scratch_mode = gr.Radio(["No Scratches", "Small Scratches", "Big Scratches"],
                                 value="No Scratches", label="Scratch Type")
-        color_order = gr.Radio(["Colorize before Restore", "Restore before Colorize"],
-                               value="Colorize before Restore", label="Colorization Order")
 
     btn = gr.Button("Enhance ✨")
     log = gr.Textbox(label="Auto Decisions", interactive=False)
 
-    btn.click(enhance_pipeline, inputs=[inp, scratch_mode, color_order], outputs=[out, log])
+    btn.click(enhance_pipeline, inputs=[inp, scratch_mode], outputs=[out, log])
 
 if __name__ == "__main__":
     demo.launch()
