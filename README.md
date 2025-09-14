@@ -4,7 +4,7 @@
 Bring your old photos back to life with AI.  
 This app restores faces 🧑‍🦳, colorizes black & white photos 🎨, and removes scratches 🧽 — all automatically.
 
-🌐 **Try it live here**: [TimeLens on Hugging Face](https://rawan-gh-timelens.hf.space)
+🌐 **Try it live here**: [TimeLens on Hugging Face](https://timelens1-timelens.hf.space)
 
 ---
 
