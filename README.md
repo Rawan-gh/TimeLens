@@ -1,19 +1,20 @@
 # 🕰️ TimeLens — Revive Memories ✨
-*A collaborative project by **Rawan Alghannam** & **Hadeel Al-Ghassab***  
+*A collaborative project by **Rawan Alghannam** & **Hadeel Al-Ghassab**
 
-Bring your old photos back to life with AI.  
-This app restores faces 🧑‍🦳, colorizes black & white photos 🎨, and removes scratches 🧽 — all automatically.
+Bring your old photos back to life with AI.
 
-🌐 **Try it live here**: [TimeLens on Hugging Face](https://timelens1-timelens.hf.space)
+This app restores faces 👩‍🦰, colorizes black & white photos 🖼️, removes scratches 🩹, and upscales images 🔍 — all automatically.
+
+👉 Live Demo:  [TimeLens on Hugging Face](https://timelens1-timelens.hf.space)
 
 ---
 
 ## ✨ Features
-- ✅ **GFPGAN** face restoration (safe defaults)
-- 🎨 **Auto colorization** for B/W photos (OpenCV DNN, Zhang et al.)
-- 🧽 **Auto de-scratch** (background inpainting while protecting faces)
-- ⬆️ **Auto upscale** (based on image size)
-- 🌐 **Web Demo** available on Hugging Face Spaces
+- ✅ **GFPGAN** for high-quality face restoration (v1.3, safe defaults).
+- 🎨 **Automatic colorization** for black & white photos (OpenCV DNN — Zhang et al.).
+- 🧽 ** Scratch removal** (background inpainting while protecting faces)
+- ⬆️ **Smart upscaling** (adaptive, based on input size).
+- 🌐 **Web Demo** hosted on Hugging Face Spaces.
 
 ---
 
