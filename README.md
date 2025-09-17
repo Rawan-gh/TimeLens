@@ -1,5 +1,5 @@
 # 🕰️ TimeLens — Revive Memories ✨
-*A collaborative project by **Rawan Alghannam** & **Hadeel Al-Ghassab**
+A collaborative project by **Rawan Alghannam** & **Hadeel Al-Ghassab**
 
 Bring your old photos back to life with AI.
 
