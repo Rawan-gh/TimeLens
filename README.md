@@ -13,7 +13,7 @@ This app restores faces 👩‍🦰, colorizes black & white photos 🖼️, rem
 - ✅ **GFPGAN** for high-quality face restoration (v1.3, safe defaults).
 - 🎨 **Automatic colorization** for black & white photos (OpenCV DNN — Zhang et al.).
 - 🧽 **Scratch removal** (background inpainting while protecting faces)
-- ⬆️ **2× Upscale** (fixed scale factor).
+- ⬆️ **×2 Upscale** (fixed scale factor).
 - 🌐 **Web Demo** hosted on Hugging Face Spaces.
 
 ---
